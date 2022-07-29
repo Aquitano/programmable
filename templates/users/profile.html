@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="profile picture">
+            <div class="media-body">
+                {% if profile.user.first_name or profile.user.last_name %}
+                    <h1>{{ profile.user.first_name }} {{ profile.user.last_name }}</h1>
+                {% endif %}
+                <h2>{{ profile.user.username }}</h2>
+                <p class="text-secondary">{{ profile.user.email }}</p>
+            </div>
+        </div>
+        {% if is_own_profile %}
+            <div>
+                <a href="{% url "user-update" profile.user.id %}">Edit Name/Email</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}
