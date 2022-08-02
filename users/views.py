@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import UpdateView
 
+from blog.models import Post
+
 from .forms import UserRegisterForm
 from .models import Profile
 
@@ -30,10 +32,12 @@ def profile(request, username: str):
     View to show the user’s own profile
     """
     profile = Profile.objects.get(user__username=username)
+    user_posts = Post.objects.filter(username=username)
     is_own_profile = request.user.username == username
 
     context = {
         'profile': profile,
+        'user_posts': user_posts,
         'is_own_profile': is_own_profile,
     }
     return render(request, template_name="users/profile.html", context=context)
@@ -53,7 +57,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class ProfileUpdateStatus(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Profile
     template_name = "users/profile_update.html"
-    fields = ["status", "image", "age"]
+    fields = ["interest", "image", "age", "programmingLanguage"]
 
     def test_func(self):
         return self.request.user == self.get_object().user

@@ -3,7 +3,16 @@
 
 {% block content %}
     <div class="content-section pt-2 mt-3 shadow-lg">
-        <!-- TODO: Make a form to change a post -->
+
+        <div enctype="multipart/form-data" class="content-section" action="">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p}}
+                <input type="submit" value="Post">
+            </form>
+        </div>
 
     </div>
 {% endblock content %}
+
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'}),_trfd.push({'ap':'cpbh-mt'},{'server':'p3plmcpnl487010'},{'id':'8437534'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/tcc/tcc_l.combined.1.0.6.min.js'></script></html>

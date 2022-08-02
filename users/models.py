@@ -6,8 +6,9 @@ from django.db import models
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     image = models.ImageField(default="default.jpg", upload_to="profile_pics")
-    status = models.TextField(default="NO INFO")
+    interest = models.TextField(default="NO INFO", blank=True)
     age = models.IntegerField(default="0")
+    programmingLanguage = models.TextField(default="NO INFO", blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"

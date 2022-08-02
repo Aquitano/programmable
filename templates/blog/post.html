@@ -4,6 +4,22 @@
         <div class="media-body">
             <!-- TODO Display all content of a single post.-->
             <!-- This html template will be included in other templates -->
+            <div class="profile">
+                <img>
+                <div class="row">
+                    <div class="col"><a href="{% url 'profile' post.user %}" style="text-decoration: none;">{{ post.user }}</a></div>
+                    <div class="col"><div class="post-date">{{ post.date_published }}</div></div>
+                    
+                </div>
+            </div>
+            
+            <div class="post-content">{{ post.content }}</div>
+            
+            <a><i class="fa-solid fa-fire"></i></a>
+            {% if post.username == user.username %}
+                <a href={% url 'edit-post' post.id%}><i class="fa-solid fa-pen-to-square"></i></a>
+                <a href={% url 'delete-post' post.id%}><i class="fa-solid fa-trash"></i></a>
+            {% endif %}
         </div>
     </article>
 </div>
