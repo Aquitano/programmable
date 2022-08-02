@@ -11,11 +11,18 @@
                 {% endif %}
                 <h2>{{ profile.user.username }}</h2>
                 <p class="text-secondary">{{ profile.user.email }}</p>
+                {% if profile.status %}
+                    <p>Status: {{ profile.status }}</p>
+                {% endif %}
+                {% if profile.age %}
+                    <p>Age: {{ profile.age }}</p>
+                {% endif %}
             </div>
         </div>
         {% if is_own_profile %}
             <div>
                 <a href="{% url "user-update" profile.user.id %}">Edit Name/Email</a>
+                <a style="padding-left: 15px;" href="{% url "profile-update" profile.id %}">Edit Profile</a>
             </div>
         {% endif %}
     </div>

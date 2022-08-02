@@ -49,3 +49,14 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("profile", args=[self.request.user.username])
+
+class ProfileUpdateStatus(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Profile
+    template_name = "users/profile_update.html"
+    fields = ["status", "image", "age"]
+
+    def test_func(self):
+        return self.request.user == self.get_object().user
+
+    def get_success_url(self):
+        return reverse("profile", args=[self.request.user.username])
