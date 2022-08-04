@@ -34,7 +34,7 @@ def profile(request, username: str):
     View to show the user’s own profile
     """
     profile = Profile.objects.get(user__username=username)
-    user_posts = Post.objects.filter(username=username).annotate(total_likes=Count('likes')).order_by('-date_published')
+    user_posts = Post.objects.filter(username=username).annotate(total_likes=Count('likes')).order_by('-id')
     liked_posts = []
     
     for post in range(len(user_posts)):

@@ -17,7 +17,7 @@ from .models import Post
 from .forms import UserPostForm
 
 def home(request):
-    posts = Post.objects.all().order_by('-date_published')
+    posts = Post.objects.all().order_by('-id')
     liked_posts = []
     
     for post in range(len(posts)):
