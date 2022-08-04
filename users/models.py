@@ -8,7 +8,12 @@ class Profile(models.Model):
     image = models.ImageField(default="default.jpg", upload_to="profile_pics")
     interest = models.TextField(default="NO INFO", blank=True)
     age = models.IntegerField(default="0")
-    programmingLanguage = models.TextField(default="NO INFO", blank=True)
+    programmingLanguage = models.TextField(
+        default="NO INFO", 
+        blank=True,
+        null=True,
+        choices= [('Python', 'Python'),('Java', 'Java'),('Visual Basic', 'Visual Basic')])
+    followers = models.ManyToManyField(User, related_name="followers")
 
     def __str__(self):
         return f"{self.user.username} Profile"

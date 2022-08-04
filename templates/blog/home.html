@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1 style="margin: 20px 0px;">Latest Posts</h1>
     {% for post in posts %}
-        {% include "blog/post.html" with post=post %}
+        {% include "blog/post.html" with post=post count=forloop.counter liked_posts=liked_posts%}
     {% endfor %}
     {% include "pageination.html" %}
 {% endblock content %}

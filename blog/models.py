@@ -1,3 +1,4 @@
+from itertools import count
 import os
 from tkinter import CASCADE
 
@@ -14,6 +15,10 @@ class Post(models.Model):
     username = models.TextField(default="Err")
     content = models.TextField()
     date_published = models.DateField(default=timezone.now)
+    likes = models.ManyToManyField(User, related_name="posts")
+
+    def total_likes(self):
+        return self.likes.count()
 
     def save(self, *args, **kwargs):
         super(Post, self).save(*args, **kwargs)   

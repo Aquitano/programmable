@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="content-section">
+    <div class="content-section" style="margin-top: 50px;">
         <div class="media">
             <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="profile picture">
             <div class="media-body">
@@ -27,9 +27,22 @@
                 <a href="{% url "user-update" profile.user.id %}">Edit Name/Email</a>
                 <a style="padding-left: 15px;" href="{% url "profile-update" profile.id %}">Edit Profile</a>
             </div>
+        {% elif is_Following %}
+            <form action={% url 'unfollow-user' user.id %} method="POST">
+                {% csrf_token %}
+                <button type="submit", name="user-id", value="{{ profile.id }}" class="like-button color-a"><i class="fa-solid fa-user-check"></i>
+                </button>
+            </form>
+        {% else %}
+            <form action={% url 'follow-user' user.id %} method="POST">
+                {% csrf_token %}
+                <button type="submit", name="user-id", value="{{ profile.id }}" class="like-button color-a"><i class="fa-solid fa-user-plus"></i>
+                </button>
+            </form>
         {% endif %}
     </div>
+    <h2 style="margin: 20px 0px;">User Posts</h2>
     {% for post in user_posts %}
-        {% include "blog/post.html" with post=post %}
+        {% include "blog/post.html" with post=post count=forloop.counter liked_posts=liked_posts%}
     {% endfor %}
 {% endblock content %}

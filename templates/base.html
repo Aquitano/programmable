@@ -12,7 +12,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.2/css/all.css">
     <link rel="stylesheet" href="{% static 'main.css' %}">
-    <link rel="stylesheet" href="{% static 'tailwind.css' %}">
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
     {% if title %}
         <title>Programmable - {{ title }}</title>
     {% else %}
@@ -21,17 +21,18 @@
 
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand font-weight-bold" href="{% url 'blog-home' %}"><i class="fa-solid fa-hat-wizard"></i> #programmable</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="font-weight-bold color-a" href="{% url 'blog-home' %}"><i class="fa-solid fa-laptop-code"></i> #programmable</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav mr-auto" style="margin-left: 15px;">
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'blog-home' %}"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+                <a class="color-a" href="{% url 'blog-home' %}"><i class="fas fa-home" style="margin-left: 15px;"></i> Home <span class="sr-only">(current)</span></a>
+                <a class="color-a" href="{% url 'following' %}"><i class="fa-solid fa-house-circle-check" style="margin-left: 15px;"></i> Following</a>
             </li>
 
 
@@ -39,13 +40,13 @@
 
         {% if user.is_authenticated %}
             {% comment %} <a href="" class="btn text-white m-2"><i class="fa-solid fa-crown"></i> My Posts</a> {% endcomment %}
-            <a href="{% url 'new-post' %}" class="btn text-white m-2"><i class="fas fa-user-edit"></i> New Post</a>
-            <a href="{% url 'profile' user.username %} " class="btn text-white m-2"><i class="fa-solid fa-hippo"></i> {{ user.username }}
+            <a href="{% url 'new-post' %}" class="btn m-2 color-a"><i class="fas fa-circle-plus"></i> New Post</a>
+            <a href="{% url 'profile' user.username %} " class="btn m-2 color-a"><i class="fa-brands fa-qq"></i> {{ user.username }}
             </a>
-            <a href="{% url 'logout' %} " class="btn text-white m-2"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="{% url 'logout' %} " class="btn m-2 color-a"><i class="fas fa-sign-out-alt"></i> Logout</a>
         {% else %}
-            <a href="{% url 'login' %} " class="btn text-white m-2"><i class="fas fa-user-tie"></i> Login</a>
-            <a href="{% url 'register' %} " class="btn text-white m-2"> <i class="fas fa-sign-in-alt"></i> Sign Up</a>
+            <a href="{% url 'login' %} " class="btn m-2 color-a"><i class="fas fa-user-tie"></i> Login</a>
+            <a href="{% url 'register' %} " class="btn m-2 color-a"> <i class="fas fa-sign-in-alt"></i> Sign Up</a>
         {% endif %}
 
     </div>
@@ -62,6 +63,12 @@
 
     {% endblock %}
 </div>
-
+<script defer src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script defer>
+    setTimeout(fade_out, 3000);
+    function fade_out() {
+        $(".alert").fadeOut();
+    }
+</script>
 </body>
 </html>
