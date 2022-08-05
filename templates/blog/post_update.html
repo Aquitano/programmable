@@ -1,11 +1,19 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Update">
-        </form>
+{% extends "base.html" %} {% block content %}
+<div class="content-section pt-2 mt-3 shadow-lg">
+  <div class="content-section">
+    <h1>Update Post</h1>
+    <hr />
+    <div class="form-group">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p}}
+        <input type="submit" value="Update" class="btn btn-main" />
+      </form>
+      <p>You can use Markdown for your post content</p>
+      <p>
+        You never heard of Markdown? Learn the basics
+        <a href="https://www.markdownguide.org/basic-syntax/">here</a>.
+      </p>
     </div>
-{% endblock %}
+  </div>
+</div>
+{% endblock content %}

@@ -1,12 +1,23 @@
-{% extends "base.html" %}
-
+{% extends "base.html" %} {% load post_extras %} 
 {% block content %}
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            <p>Are you sure you want to delete your post with id {{ object.id }}?</p>
-            {{ form.as_p }}
-            <input type="submit" value="Confirm">
-        </form>
+<div class="content-section pt-2 mt-3 shadow-lg">
+  <div class="content-section">
+    <h1>Delete Post</h1>
+    <hr />
+    <details open style="margin-bottom: 50px">
+      <summary>
+        Are you sure you want to delete your post with id {{ object.id }}?
+      </summary>
+      <div class="card card-body" style="margin-top: 15px">
+        {{ object.content|convert_markdown|safe }}
+      </div>
+    </details>
+    <div class="form-group">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p}}
+        <input type="submit" value="Delete" class="btn btn-main"/>
+      </form>
     </div>
-{% endblock %}
+  </div>
+</div>
+{% endblock content %}

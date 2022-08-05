@@ -1,20 +1,19 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
-
-{% block content %}
-    <div class="content-section pt-2 mt-3 shadow-lg">
-
-        <div enctype="multipart/form-data" class="content-section" action="">
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p}}
-                <input type="submit" value="Post">
-            </form>
-        </div>
-
-        <p>You can use Markdown for your post content</p>
-        <p>You never heard of Markdown? Learn the basics <a href="https://www.markdownguide.org/basic-syntax/">here</a>.</p>
+{% extends "base.html" %} {% block content %}
+<div class="content-section pt-2 mt-3 shadow-lg">
+  <div class="content-section">
+    <h1>Create Post</h1>
+    <hr />
+    <div class="form-group">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p}}
+        <input type="submit" value="Post" class="btn btn-main" />
+      </form>
     </div>
+    <p>You can use Markdown for your post content</p>
+    <p>
+      You never heard of Markdown? Learn the basics
+      <a href="https://www.markdownguide.org/basic-syntax/">here</a>.
+    </p>
+  </div>
+</div>
 {% endblock content %}
-
-<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'}),_trfd.push({'ap':'cpbh-mt'},{'server':'p3plmcpnl487010'},{'id':'8437534'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/tcc/tcc_l.combined.1.0.6.min.js'></script></html>

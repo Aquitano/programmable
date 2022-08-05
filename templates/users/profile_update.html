@@ -1,14 +1,17 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <div class="profile-update">
-        <h2>Edit Your Profile</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="user-box">
-            {{ form.as_p }}
-            <input type="submit" value="Update">
-            </div>
-        </form>
+{% extends "base.html" %} {% block content %}
+<div class="content-section pt-2 mt-3 shadow-lg">
+  <div class="content-section">
+    <h2>Edit Your Profile</h2>
+    <hr />
+    <div class="form-group">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="user-box">
+          {{ form.as_p }}
+          <input type="submit" value="Update" class="btn btn-main" />
+        </div>
+      </form>
     </div>
+  </div>
+</div>
 {% endblock %}

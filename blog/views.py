@@ -1,28 +1,21 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from django.views.generic import (
-    ListView,
-    CreateView,
-    UpdateView,
-    DeleteView
-)
-
+from django.views.generic import (ListView, CreateView, UpdateView, DeleteView)
 from users.models import Profile
-
 from .models import Post
 from .forms import UserPostForm
+
 
 def home(request):
     posts = Post.objects.all().order_by('-id')
     liked_posts = []
-    
+
     for post in range(len(posts)):
         if request.user in posts[post].likes.all():
-            liked_posts.append(post+1)
+            liked_posts.append(post + 1)
 
     context = {
         'posts': posts,
@@ -30,27 +23,27 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
-@login_required
-def NewPostView(request):
-    form = UserPostForm(request.POST or None)
 
-    if request.method == "POST":
-            if form.is_valid():
-                    form.instance.user = request.user
-                    form.instance.username = request.user.username
-                    form.instance.content = form.instance.content.replace("script", "spt")
-                    form.save()
-            return HttpResponseRedirect("/")
+class AddPostView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = UserPostForm
+    template_name = "blog/post_form.html"
     
-    context = {'form': form,}
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-    return render(request, 'blog/post_form.html', context)
-
+    def get_success_url(self):
+        return reverse("profile", args=[self.request.user.username])
 
 class EditPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     template_name = "blog/post_update.html"
-    fields = ["content"]
+    form_class = UserPostForm
+
+    def form_valid(self, form):
+        form.instance.content = form.instance.content.replace("script", "s").replace("style", "s")
+        return super().form_valid(form)
 
     def test_func(self):
         return self.request.user == self.get_object().user
@@ -68,51 +61,31 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse("profile", args=[self.request.user.username])
 
-
-# def PostsListView(request):
-#     allposts = Post.objects.all()
-
-#     context = {'allposts': allposts,}
-    
-#     return render(request, 'Blog/userposts-list-view.html', context)
-
-def UserPostsListView(request):
-    allposts = Post.objects.filter()
-
-    context = {'allposts': allposts,}
-    
-    return render(request, 'Blog/userposts-list-view.html', context)
-
 @login_required
-def LikedPostsListView(request):
-    alluser = Profile.objects.all()
-    current = get_object_or_404(Profile, id=request.user.profile.id)
+def liked_posts_view(request):
+    all_user = Profile.objects.all()
     filter_posts = []
 
-    for user in alluser:
+    for user in all_user:
         if request.user in user.followers.all():
             filter_posts.append(user)
 
-    context = {'posts': filter_posts,}
-    
+    context = {
+        'posts': filter_posts,
+    }
+
     return render(request, 'blog/following.html', context)
 
-# def PostsDetailView(request, url=None):
-#     post = get_object_or_404(Post, url=url)
-
-#     context = {'post': post,}
-    
-#     return render(request, 'Blog/userposts-detail-view.html', context)
-
 @login_required
-def LikeView(request, pk):
+def like_view(request, pk):
     post = get_object_or_404(Post, id=request.POST.get('post-id'))
     post.likes.add(request.user)
 
     return HttpResponseRedirect(reverse('blog-home'))
 
+
 @login_required
-def UnlikeView(request, pk):
+def unlike_view(request, pk):
     post = get_object_or_404(Post, id=request.POST.get('post-id'))
     post.likes.remove(request.user)
 

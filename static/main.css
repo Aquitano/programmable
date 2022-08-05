@@ -1,9 +1,30 @@
 :root {
-    --input-border: #8b8a8b;
-    --input-focus-h: 245;
-    --input-focus-s: 100%;
-    --input-focus-l: 42%;
-  }
+  --input-border: #8b8a8b;
+  --input-focus-h: 245;
+  --input-focus-s: 100%;
+  --input-focus-l: 42%;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 15px;
+}
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#6366f1),
+    to(#3730a3)
+  );
+  background-image: linear-gradient(to right, #6366f1, #3730a3);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0 3px 13px 1px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.12) 0 3px 13px 1px;
+}
 h1,
 h2,
 h3,
@@ -12,7 +33,6 @@ h5,
 h6 {
   color: #444444;
 }
-
 .content-section {
   background: #ffffff;
   padding: 10px 20px;
@@ -20,103 +40,44 @@ h6 {
   border-radius: 3px;
   margin-bottom: 20px;
 }
-
 .article-title {
   color: #444444;
 }
-
 .article-content {
   white-space: pre-line;
 }
-
 .article-img {
   height: 65px;
   width: 65px;
   margin-right: 16px;
 }
-
 .account-img {
   height: 125px;
   width: 125px;
   margin-right: 20px;
   margin-bottom: 16px;
 }
-
 .account-heading {
   font-size: 2.5rem;
 }
-
 .post-date {
   text-align: end;
 }
-
 .post-content {
   margin-top: 25px;
   margin-bottom: 25px;
 }
-
-/* .profile-update {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 400px;
-    padding: 40px;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, .5);
-    box-sizing: border-box;
-    box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-    border-radius: 10px;
-}
-
-.profile-update h2 {
-    margin: 0 0 30px;
-    padding: 0;
-    color: #fff;
-    text-align: center;
-}
-
-.user-box {
-    position: relative;
-}
-
-.user-box input {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 16px;
-    color: #fff;
-    margin-bottom: 30px;
-    border: none;
-    border-bottom: 1px solid #fff;
-    outline: none;
-    background: transparent;
-}
-
-.user-box label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 10px 0;
-    font-size: 16px;
-    color: #fff;
-    pointer-events: none;
-    transition: .5s;
-}
-
-.user-box input:focus~label,
-.user-box input:valid~label {
-    top: -20px;
-    left: 0;
-    color: #03e9f4;
-    font-size: 12px;
-} */
 .like-button {
   padding: 0;
   border: none;
   background: none;
+  -webkit-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
 }
 .like-button:hover {
   color: #a4550c;
+  -webkit-animation: jiggle 0.3s ease-in;
   animation: jiggle 0.3s ease-in;
 }
 .liked {
@@ -124,44 +85,80 @@ h6 {
 }
 .color-a {
   color: #3730a3;
+  -webkit-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
   transition: all 0.5s ease;
 }
 .color-a:hover {
   color: #6366f1;
   text-decoration: none;
 }
-
+@-webkit-keyframes jiggle {
+  15%,
+  40%,
+  75%,
+  100% {
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+  }
+  15% {
+    -webkit-transform: scale(1.1, 1.1);
+    transform: scale(1.1, 1.1);
+  }
+  40% {
+    -webkit-transform: scale(0.9, 0.9);
+    transform: scale(0.9, 0.9);
+  }
+  75% {
+    -webkit-transform: scale(1.08, 1);
+    transform: scale(1.08, 1);
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+}
 @keyframes jiggle {
   15%,
   40%,
   75%,
   100% {
+    -webkit-transform-origin: center center;
     transform-origin: center center;
   }
   15% {
+    -webkit-transform: scale(1.1, 1.1);
     transform: scale(1.1, 1.1);
   }
   40% {
+    -webkit-transform: scale(0.9, 0.9);
     transform: scale(0.9, 0.9);
   }
   75% {
+    -webkit-transform: scale(1.08, 1);
     transform: scale(1.08, 1);
   }
   100% {
+    -webkit-transform: scale(1, 1);
     transform: scale(1, 1);
   }
 }
 .account-img {
   margin-bottom: 0 !important;
 }
-input:not(textarea) {
-  line-height: 1;
-  height: 2.25rem;
+.btn-main {
+  color: #fff;
+  background-color: #3730a3;
+  border-color: #3730a3;
+  -webkit-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
-input:focus {
-  border-color: hsl(
-    var(--input-focus-h),
-    var(--input-focus-s),
-    var(--input-focus-l)
-  );
+.btn-main:hover {
+  color: #fff;
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+.content-section {
+  margin-top: 20px !important;
 }
