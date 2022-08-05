@@ -38,6 +38,7 @@ def NewPostView(request):
             if form.is_valid():
                     form.instance.user = request.user
                     form.instance.username = request.user.username
+                    form.instance.content = form.instance.content.replace("script", "spt")
                     form.save()
             return HttpResponseRedirect("/")
     
