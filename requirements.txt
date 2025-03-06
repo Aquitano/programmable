@@ -3,4 +3,4 @@ Django==4.2.18
 django-crispy-forms==2.3
 Pillow==10.3.0
 sqlparse==0.5.3
-markdown==3.4.4
+markdown==3.7
