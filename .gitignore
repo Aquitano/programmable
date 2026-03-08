@@ -105,3 +105,10 @@ venv.bak/
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion,
 .idea/
 .vscode/settings.json
+
+# Local Django state
+*.sqlite3
+.env.local
+.env.*.local
+media\profile_pics\*
+!media\profile_pics\python.jpg

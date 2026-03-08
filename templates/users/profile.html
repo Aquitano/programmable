@@ -18,35 +18,35 @@
                     <p>Age: {{ profile.age }}</p>
                 {% endif %}
                 {% if profile.programmingLanguage %}
-                    <p>Liked Programming Language: {{ profile.programmingLanguage }}</p>
+                    <p>Liked programming language: {{ profile.programmingLanguage }}</p>
                 {% endif %}
             </div>
         </div>
         {% if is_own_profile %}
             <div>
-                <a href="{% url "user-update" profile.user.id %}">Edit Name/Email</a>
-                <a style="padding-left: 15px;" href="{% url "profile-update" profile.id %}">Edit Profile</a>
+                <a href="{% url 'user-update' profile.user.id %}">Edit name and email</a>
+                <a style="padding-left: 15px;" href="{% url 'profile-update' profile.id %}">Edit profile</a>
             </div>
         {% elif is_following %}
-            <form action={% url 'unfollow-user' user.id %} method="POST">
+            <form action="{% url 'unfollow-user' profile.user.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit", name="user-id", value="{{ profile.id }}" class="like-button color-a"><i class="fa-solid fa-user-check"></i>
-                </button>
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <button type="submit" class="like-button color-a" aria-label="Unfollow {{ profile.user.username }}"><i class="fa-solid fa-user-check"></i></button>
             </form>
         {% else %}
-            <form action={% url 'follow-user' user.id %} method="POST">
+            <form action="{% url 'follow-user' profile.user.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit", name="user-id", value="{{ profile.id }}" class="like-button color-a"><i class="fa-solid fa-user-plus"></i>
-                </button>
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <button type="submit" class="like-button color-a" aria-label="Follow {{ profile.user.username }}"><i class="fa-solid fa-user-plus"></i></button>
             </form>
         {% endif %}
     </div>
-    <h2 style="margin: 20px 0px;">User Posts</h2>
+    <h2 style="margin: 20px 0px;">User posts</h2>
     {% if user_posts %}
         {% for post in user_posts %}
-            {% include "blog/post.html" with post=post count=forloop.counter liked_posts=liked_posts%}
+            {% include "blog/post.html" with post=post liked_post_ids=liked_post_ids %}
         {% endfor %}
     {% else %}
-        <p>There are currently no posts from this user!</p>
+        <p>There are currently no posts from this user.</p>
     {% endif %}
 {% endblock content %}
