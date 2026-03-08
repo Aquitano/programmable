@@ -8,22 +8,30 @@ class Profile(models.Model):
     image = models.ImageField(default="default.jpg", upload_to="profile_pics")
     interest = models.TextField(default="NO INFO", blank=True)
     age = models.IntegerField(default="0")
-    programmingLanguage = models.TextField(default="NO INFO",
-                                           blank=True,
-                                           null=True,
-                                           choices=[('Python', 'Python'),
-                                                    ('Java', 'Java'),
-                                                    ('Visual Basic',
-                                                     'Visual Basic')])
+    programmingLanguage = models.TextField(
+        default="NO INFO",
+        blank=True,
+        choices=[
+            ("Python", "Python"),
+            ("Java", "Java"),
+            ("Visual Basic", "Visual Basic"),
+        ],
+    )
     followers = models.ManyToManyField(User, related_name="followers")
 
     def __str__(self):
         return f"{self.user.username} Profile"
 
     def save(self, *args, **kwargs):
-        super(Profile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-        img = Image.open(self.image.path)
-        if img.height > 300 or img.width > 300:
-            img.thumbnail((300, 300))
-            img.save(self.image.path)
+        if not self.image or not hasattr(self.image, "path"):
+            return
+
+        try:
+            with Image.open(self.image.path) as img:
+                if img.height > 300 or img.width > 300:
+                    img.thumbnail((300, 300))
+                    img.save(self.image.path)
+        except OSError:
+            return

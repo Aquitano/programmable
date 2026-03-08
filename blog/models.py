@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     username = models.TextField(default="Err")
@@ -13,4 +14,6 @@ class Post(models.Model):
         return self.likes.count()
 
     def save(self, *args, **kwargs):
-        super(Post, self).save(*args, **kwargs)
+        if self.user_id:
+            self.username = self.user.username
+        super().save(*args, **kwargs)

@@ -1,20 +1,20 @@
 <div class="mt-3">
-    <article class="media content-section shadow ">
+    <article class="media content-section shadow">
         <div class="media-body">
             <div class="profile">
                 <div class="row">
                     <div class="col">
-                        <img class="rounded-circle account-img" src="{{ post.user.profile.image.url }}" style="width: 75px;height: auto;" alt="profile picture"/>
-                        <a href="{% url 'profile' post.user %}" style="text-decoration: none;">{{ post.user }}</a>
+                        <img class="rounded-circle account-img" src="{{ profile.user.profile.image.url }}" style="width: 75px; height: auto;" alt="profile picture" />
+                        <a href="{% url 'profile' profile.user %}" style="text-decoration: none;">{{ profile.user }}</a>
                     </div>
-                </div>  
+                </div>
             </div>
-            
+
             <div class="post-content">
-                <form action={% url 'unfollow-user' user.id %} method="POST">
+                <form action="{% url 'unfollow-user' profile.user.id %}" method="post">
                     {% csrf_token %}
-                    <button type="submit", name="user-id", value="{{ post.user.profile.id }}" class="like-button color-a"><i class="fa-solid fa-user-check"></i>
-                    </button>
+                    <input type="hidden" name="next" value="{{ request.path }}" />
+                    <button type="submit" class="like-button color-a" aria-label="Unfollow {{ profile.user.username }}"><i class="fa-solid fa-user-check"></i></button>
                 </form>
             </div>
         </div>

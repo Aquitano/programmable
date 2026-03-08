@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% load post_extras %} 
+{% extends "base.html" %}
+{% load post_extras %}
+
 {% block content %}
 <div class="content-section pt-2 mt-3 shadow-lg">
   <div class="content-section">
@@ -9,11 +11,11 @@
         Are you sure you want to delete your post with id {{ object.id }}?
       </summary>
       <div class="card card-body" style="margin-top: 15px">
-        {{ object.content|convert_markdown|safe }}
+        {{ object.content|convert_markdown }}
       </div>
     </details>
     <div class="form-group">
-      <form method="POST" enctype="multipart/form-data">
+      <form method="post" enctype="multipart/form-data">
         {% csrf_token %} {{ form.as_p}}
         <input type="submit" value="Delete" class="btn btn-main"/>
       </form>

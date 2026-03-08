@@ -1,19 +1,11 @@
-# social_app
+# Programmable
 
-It is recommended to use a virtual environment.
+Programmable is a small Django social app for sharing short posts, following other users, and keeping a lightweight profile.
 
-Then the requirements in the requirements.txt can be installed using the command:
-```
-pip install -r requirements.txt
-```
+## Stack
 
-Then you need to run the migrations to set up the sqlite database:
-```
-python manage.py migrate
-```
-
-Additionally, you can add an admin user:
-```
-python manage.py createsuperuser
-```
-With this user you can access the [admin page](http://localhost:8000/admin) that is provided by django.
+- Python
+- Django
+- SQLite for local development
+- Pillow for profile images
+- Python-Markdown for post formatting

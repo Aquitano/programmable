@@ -2,12 +2,12 @@
 
 {% block content %}
 <h1 style="margin: 20px 0px;">Following</h1>
-    {% if posts %}
-        {% for post in posts %}
-            {% include "blog/user.html" with post=post%}
+    {% if profiles %}
+        {% for profile in profiles %}
+            {% include "blog/user.html" with profile=profile %}
         {% endfor %}
     {% else %}
-        <p>You are currently not following anybody!</p>
-    {% endif%}
+        <p>You are currently not following anybody.</p>
+    {% endif %}
     {% include "pageination.html" %}
 {% endblock content %}

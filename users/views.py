@@ -2,58 +2,65 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse
-from django.views.generic import UpdateView
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
+from django.views.generic import UpdateView
+
 from blog.models import Post
+
 from .forms import ProfileUpdateForm, UserRegisterForm
 from .models import Profile
 
 
+def _get_redirect_target(request, fallback_name, *fallback_args):
+    next_url = request.POST.get("next")
+    allowed_hosts = {request.get_host()}
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts=allowed_hosts,
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return reverse(fallback_name, args=fallback_args)
+
+
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             Profile.objects.create(user=user)
             messages.success(
                 request,
-                f'Your account has been created! You are now able to log in')
-            return redirect('login')
+                "Your account has been created. You can log in now.",
+            )
+            return redirect("login")
     else:
         form = UserRegisterForm()
 
-    return render(request, 'users/register.html', {'form': form})
+    return render(request, "users/register.html", {"form": form})
 
 
 @login_required
 def profile(request, username: str):
-    """
-    View to show the user’s own profile
-    """
-    profile = Profile.objects.get(user__username=username)
-    user_posts = Post.objects.filter(user=get_object_or_404(User, username=username)).annotate(
-        total_likes=Count('likes')).order_by('-id') # Username muss somit eigentlich nicht mehr bei jedem Post gespeichert werden
-    liked_posts = []
+    profile = get_object_or_404(Profile.objects.select_related("user"), user__username=username)
+    user_posts = Post.objects.filter(user=profile.user).annotate(total_likes=Count("likes")).order_by("-id")
+    liked_post_ids = set()
 
-    for post in range(len(user_posts)):
-        if request.user in user_posts[post].likes.all():
-            liked_posts.append(post + 1)
+    if request.user.is_authenticated:
+        liked_post_ids = set(user_posts.filter(likes=request.user).values_list("id", flat=True))
 
-    if request.user in profile.followers.all():
-        is_following = True
-    else:
-        is_following = False
-
+    is_following = request.user.is_authenticated and profile.followers.filter(pk=request.user.pk).exists()
     is_own_profile = request.user.username == username
     context = {
-        'profile': profile,
-        'user_posts': user_posts,
-        'liked_posts': liked_posts,
-        'is_following': is_following,
-        'is_own_profile': is_own_profile,
+        "profile": profile,
+        "user_posts": user_posts,
+        "liked_post_ids": liked_post_ids,
+        "is_following": is_following,
+        "is_own_profile": is_own_profile,
     }
     return render(request, template_name="users/profile.html", context=context)
 
@@ -83,22 +90,28 @@ class ProfileUpdateStatus(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 @login_required
+@require_POST
 def follow_view(request, pk):
-    profile = get_object_or_404(Profile, id=request.POST.get('user-id'))
+    profile = get_object_or_404(Profile.objects.select_related("user"), user_id=pk)
+
+    if profile.user == request.user:
+        messages.error(request, "You cannot follow your own profile.")
+        return redirect(_get_redirect_target(request, "profile", profile.user.username))
+
     profile.followers.add(request.user)
-
-    messages.success(request, f'Followed user {profile.user.username}!')
-
-    return HttpResponseRedirect(
-        reverse("profile", args=[profile.user.username]))
+    messages.success(request, f"You are now following {profile.user.username}.")
+    return redirect(_get_redirect_target(request, "profile", profile.user.username))
 
 
 @login_required
+@require_POST
 def unfollow_view(request, pk):
-    profile = get_object_or_404(Profile, id=request.POST.get('user-id'))
+    profile = get_object_or_404(Profile.objects.select_related("user"), user_id=pk)
+
+    if profile.user == request.user:
+        messages.error(request, "You cannot unfollow your own profile.")
+        return redirect(_get_redirect_target(request, "profile", profile.user.username))
+
     profile.followers.remove(request.user)
-
-    messages.success(request, f'Unfollowed user {profile.user.username}!')
-
-    return HttpResponseRedirect(
-        reverse("profile", args=[profile.user.username]))
+    messages.success(request, f"You unfollowed {profile.user.username}.")
+    return redirect(_get_redirect_target(request, "profile", profile.user.username))

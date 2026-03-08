@@ -1,34 +1,48 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import (ListView, CreateView, UpdateView, DeleteView)
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
+from django.views.generic import CreateView, DeleteView, UpdateView
+
 from users.models import Profile
-from .models import Post
+
 from .forms import UserPostForm
+from .models import Post
+
+
+def _get_redirect_target(request, fallback_name, *fallback_args):
+    next_url = request.POST.get("next")
+    allowed_hosts = {request.get_host()}
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts=allowed_hosts,
+        require_https=request.is_secure(),
+    ):
+        return next_url
+    return reverse(fallback_name, args=fallback_args)
 
 
 def home(request):
-    posts = Post.objects.all().order_by('-id')
-    liked_posts = []
+    posts = Post.objects.select_related("user", "user__profile").prefetch_related("likes").order_by("-id")
+    liked_post_ids = set()
 
-    for post in range(len(posts)):
-        if request.user in posts[post].likes.all():
-            liked_posts.append(post + 1)
+    if request.user.is_authenticated:
+        liked_post_ids = set(request.user.posts.values_list("id", flat=True))
 
     context = {
-        'posts': posts,
-        'liked_posts': liked_posts,
+        "posts": posts,
+        "liked_post_ids": liked_post_ids,
     }
-    return render(request, 'blog/home.html', context)
+    return render(request, "blog/home.html", context)
 
 
 class AddPostView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = UserPostForm
     template_name = "blog/post_form.html"
-    
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
@@ -36,20 +50,18 @@ class AddPostView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("profile", args=[self.request.user.username])
 
+
 class EditPostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     template_name = "blog/post_update.html"
     form_class = UserPostForm
-
-    def form_valid(self, form):
-        form.instance.content = form.instance.content.replace("script", "s").replace("style", "s")
-        return super().form_valid(form)
 
     def test_func(self):
         return self.request.user == self.get_object().user
 
     def get_success_url(self):
         return reverse("profile", args=[self.request.user.username])
+
 
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
@@ -61,32 +73,29 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         return reverse("profile", args=[self.request.user.username])
 
+
 @login_required
 def liked_posts_view(request):
-    all_user = Profile.objects.all()
-    filter_posts = []
-
-    for user in all_user:
-        if request.user in user.followers.all():
-            filter_posts.append(user)
+    followed_profiles = Profile.objects.filter(followers=request.user).select_related("user", "user__profile")
 
     context = {
-        'posts': filter_posts,
+        "profiles": followed_profiles,
     }
 
-    return render(request, 'blog/following.html', context)
+    return render(request, "blog/following.html", context)
+
 
 @login_required
+@require_POST
 def like_view(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post-id'))
+    post = get_object_or_404(Post, id=pk)
     post.likes.add(request.user)
-
-    return HttpResponseRedirect(reverse('blog-home'))
+    return redirect(_get_redirect_target(request, "blog-home"))
 
 
 @login_required
+@require_POST
 def unlike_view(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post-id'))
+    post = get_object_or_404(Post, id=pk)
     post.likes.remove(request.user)
-
-    return HttpResponseRedirect(reverse('blog-home'))
+    return redirect(_get_redirect_target(request, "blog-home"))
